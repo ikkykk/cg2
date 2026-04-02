@@ -1,0 +1,26 @@
+import numpy as np
+
+def get_projection_matrix(eye_fov, aspect_ratio, zNear, zFar):
+    eye_fov_rad = eye_fov * np.pi / 180.0
+    t = np.tan(eye_fov_rad / 2.0) * zNear
+    r = aspect_ratio * t
+    l = -r
+    b = -t
+    n = -zNear
+    f = -zFar
+
+    M_persp_to_ortho = np.array([
+        [n, 0.0, 0.0, 0.0],
+        [0.0, n, 0.0, 0.0],
+        [0.0, 0.0, n + f, -n * f],
+        [0.0, 0.0, 1.0, 0.0]
+    ])
+
+    M_ortho = np.array([
+        [2.0 / (r - l), 0.0, 0.0, -(r + l) / (r - l)],
+        [0.0, 2.0 / (t - b), 0.0, -(t + b) / (t - b)],
+        [0.0, 0.0, 2.0 / (n - f), -(n + f) / (n - f)],
+        [0.0, 0.0, 0.0, 1.0]
+    ])
+
+    return M_ortho @ M_persp_to_ortho
